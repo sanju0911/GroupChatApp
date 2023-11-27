@@ -1,15 +1,19 @@
 const express = require("express");
+const http = require("http");
+const socketIo = require("socket.io");
+const path = require("path");
 const mysql = require("mysql");
 const dotenv = require("dotenv");
-const path = require("path");
-const hbs = require("hbs");
 const cookieParser = require("cookie-parser");
-
+const cors = require("cors");
+const PORT = process.env.PORT || 5000;
 dotenv.config({
   path: "./.env",
 });
 
 const app = express();
+app.use(cors());
+
 const db = mysql.createConnection({
   host: process.env.DATABASE_HOST,
   user: process.env.DATABASE_USER,
@@ -27,13 +31,19 @@ db.connect((err) => {
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-// console.log(__dirname);
-const location = path.join(__dirname, "./public");
-app.use(express.static(location));
+
+app.use(express.static(path.join(__dirname, "public")));
 app.set("view engine", "hbs");
 
+// Routes
 app.use("/", require("./routes/pages"));
 app.use("/auth", require("./routes/auth"));
-app.listen(5000, () => {
-  console.log("Server is running on port 5000");
-});
+
+// Socket.io integration
+const server = http.createServer(app);
+const io = socketIo(server);
+
+require("./socket")(io, db); // Import and execute socket setup
+
+// Start the server
+server.listen(PORT, () => console.log(`💬 server on port ${PORT}`));

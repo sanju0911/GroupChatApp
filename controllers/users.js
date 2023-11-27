@@ -108,7 +108,7 @@ exports.isLoggedIn = async (req, res, next) => {
         req.cookies.sanju,
         process.env.JWT_SECRET
       );
-      console.log(decode);
+      //console.log(decode);
       db.query(
         "select * from users where id = ?",
         [decode.id],

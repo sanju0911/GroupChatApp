@@ -10,8 +10,8 @@
   <body>
     <div class="container">
       <div class="text">User Login</div>
-        {{#if msg}}
-      <p class = "{{msg_type}}">{{msg}}</p>
+      {{#if msg}}
+      <p class="{{msg_type}}">{{msg}}</p>
       {{/if}}
       <form action="/auth/login" method="POST">
         <div class="data">
