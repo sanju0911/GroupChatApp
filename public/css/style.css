@@ -188,3 +188,15 @@ a {
 		display: none;
 	}
 }
+#upload-btn {
+	background-color: #a7aea7;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 16px;
+	cursor: pointer;
+  }
+  
+  #upload-btn:hover {
+	background-color: #45a049;
+  }

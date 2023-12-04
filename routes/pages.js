@@ -37,7 +37,9 @@ router.get("/home", controller.isLoggedIn, (req, res) => {
 
 router.get("/messages", controller.isLoggedIn, (req, res) => {
   if (req.user) {
-    res.sendFile(path.join(__dirname, "../public/messages.html"));
+    res.sendFile(path.join(__dirname, "../public/index.html"), {
+      user: req.user,
+    });
   } else {
     res.redirect("/login");
   }

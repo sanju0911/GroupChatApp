@@ -1,5 +1,6 @@
 // socket.js
 const formatMessage = require("./utils/messages");
+const getCurrentTime = require("./utils/time");
 const {
   userJoin,
   getCurrentUser,
@@ -11,16 +12,18 @@ module.exports = (io, db) => {
   io.on("connection", (socket) => {
     console.log(io.of("/").adapter);
 
-    socket.on("joinRoom", async ({ username, room }) => {
+    socket.on("joinRoom", ({ username, room }) => {
       const user = userJoin(socket.id, username, room);
 
       socket.join(user.room);
 
+      // Emit the welcome message to the user who joined
       socket.emit(
         "message",
-        formatMessage("ChatCord Bot", "Welcome to ChatCord!")
+        formatMessage("ChatCord Bot", `Welcome to ${user.room}!`)
       );
 
+      // Broadcast the join message to all users in the room
       socket.broadcast
         .to(user.room)
         .emit(
@@ -28,50 +31,52 @@ module.exports = (io, db) => {
           formatMessage("ChatCord Bot", `${user.username} has joined the chat`)
         );
 
+      // Emit the updated user list to all users in the room
       io.to(user.room).emit("roomUsers", {
         room: user.room,
         users: getRoomUsers(user.room),
       });
-
-      try {
-        const result = await db.query(
-          "SELECT * FROM message WHERE room = ? ORDER BY date DESC LIMIT 5",
-          [user.room]
-        );
-
-        console.log("Fetched messages from the database:", result);
-
-        if (Array.isArray(result) && result.length > 0) {
-          const messages = result.map((message) =>
-            formatMessage(message.name, message.message)
-          );
-          messages.reverse();
-          messages.forEach((message) => {
-            socket.emit("message", message);
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching messages from the database:", error);
-      }
     });
 
-    socket.on("chatMessage", async (msg) => {
+    socket.on("chatMessage", async (data) => {
       const user = getCurrentUser(socket.id);
 
-      io.to(user.room).emit("message", formatMessage(user.username, msg));
+      if (user) {
+        const { message, file } = data;
 
-      const messageData = {
-        room: user.room,
-        name: user.username,
-        message: msg,
-        date: new Date().toISOString().slice(0, 19).replace("T", " "),
-      };
+        if (file) {
+          // Handle file upload logic here
+          // You may want to save the file to the server, generate a unique filename, etc.
+          // Then broadcast a message with the file details to all users in the room
+          io.to(user.room).emit("fileMessage", {
+            username: user.username,
+            time: getCurrentTime(),
+            fileDetails: {
+              url: "example-url", // Replace with the actual property for file URL
+            },
+          });
+        } else if (message) {
+          const messageData = {
+            room: user.room,
+            name: user.username,
+            message: message,
+            date: new Date().toISOString().slice(0, 19).replace("T", " "),
+          };
 
-      try {
-        await db.query("INSERT INTO message SET ?", messageData);
-        console.log("Message stored in the database");
-      } catch (error) {
-        console.error("Error storing message in the database:", error);
+          try {
+            // Store the text message in the database
+            await db.query("INSERT INTO message SET ?", messageData);
+            console.log("Text message stored in the database");
+
+            // Broadcast the text message to all users in the room
+            io.to(user.room).emit("message", {
+              ...formatMessage(user.username, message),
+              time: getCurrentTime(),
+            });
+          } catch (error) {
+            console.error("Error storing text message in the database:", error);
+          }
+        }
       }
     });
 
