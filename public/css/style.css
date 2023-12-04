@@ -1,158 +1,190 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500&display=swap');
-*{
-  margin: 0;
-  padding: 0;
-  outline: none;
-  box-sizing: border-box;
-  font-family: 'Noto Sans', sans-serif;
-}
-body{
-  height: 100vh;
-  width: 100%;
-  background:#5199E4;
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+:root {
+	--dark-color-a: #667aff;
+	--dark-color-b: #7386ff;
+	--light-color: #e6e9ff;
+	--success-color: #5cb85c;
+	--error-color: #d9534f;
 }
 
-.container,
-.container-fluid
-{
-  position: absolute;
-  top:50%;
-  left: 50%;
-  transform: translate(-50%,-50%);
-  display: block;
-  background: #fff;
-  width: 410px;
-  padding: 30px;
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
 }
 
-.container .text{
-  font-size: 35px;
-  font-weight: 400;
-  text-align: center;
-  color:#5199E4;
+body {
+	font-family: 'Roboto', sans-serif;
+	font-size: 16px;
+	background: var(--light-color);
+	margin: 20px;
 }
 
-.container form{
-margin-top: -20px;
+ul {
+	list-style: none;
 }
 
-.container form .data{
-  height: 45px;
-  width: 100%;
-  margin: 40px 0;
+a {
+	text-decoration: none;
 }
 
-form .data label{
-  font-size: 18px;
+.btn {
+	cursor: pointer;
+	padding: 5px 15px;
+	background: var(--light-color);
+	color: var(--dark-color-a);
+	border: 0;
+	font-size: 17px;
 }
 
+/* Chat Page */
 
-form .data input{
-  height: 100%;
-  width: 100%;
-  padding-left: 10px;
-  font-size: 17px;
-  border: 1px solid silver;
-}
-
-form .data input:focus{
-  border-color: #5199E4;
-  border-bottom-width: 2px;
+.chat-container {
+	max-width: 1100px;
+	background: #fff;
+	margin: 30px auto;
+	overflow: hidden;
 }
 
-
-form .forgot-pass{
-  margin-top: -8px;
-}
-form .forgot-pass a{
-  color: #5199E4;
-  text-decoration: none;
-}
-form .forgot-pass a:hover{
-  text-decoration: underline;
-}
-
-form .btn{
-  margin: 30px 0;
-  height: 45px;
-  width: 100%;
+.chat-header {
+	background: var(--dark-color-a);
+	color: #fff;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	padding: 15px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
-form .btn button{
-  height: 100%;
-  width: 100%;
-  background: none;
-  border: none;
-  color: #fff; 
-   background:#5199E4;
-   font-size: 18px;
-   font-weight: 500;
-   text-transform: uppercase;
-   letter-spacing: 1px;
-   cursor: pointer;
+.chat-main {
+	display: grid;
+	grid-template-columns: 1fr 3fr;
 }
 
-form .signup-link{
-  text-align: center;
+.chat-sidebar {
+	background: var(--dark-color-b);
+	color: #fff;
+	padding: 20px 20px 60px;
+	overflow-y: scroll;
 }
 
-form .signup-link a{
-  color: #5199E4;
-  text-decoration: none;
-}
-form .signup-link a:hover{
-  text-decoration: underline;
-}
-   
-
-.container-fluid{
-  width: 600px;
-  display: flex;
-  flex-direction: column;
-  align-items: center
+.chat-sidebar h2 {
+	font-size: 20px;
+	background: rgba(0, 0, 0, 0.1);
+	padding: 10px;
+	margin-bottom: 20px;
 }
 
-nav{
-  width: 100%; 
-  height:50px;
-  background:white;
-  padding: 0px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.chat-sidebar h3 {
+	margin-bottom: 15px;
 }
 
-nav .logo{
-  font-weight:500;
-  font-size: 18px;
-  color:#34495e;
+.chat-sidebar ul li {
+	padding: 10px 0;
 }
 
-nav .menu a{
-  margin:10px 10px ;
-  text-decoration: none;
-  font-size:18px;
-  color: #5199E4;
+.chat-messages {
+	padding: 30px;
+	max-height: 500px;
+	overflow-y: scroll;
 }
 
-nav .menu a:hover{
-  text-decoration: underline;
+.chat-messages .message {
+	padding: 10px;
+	margin-bottom: 15px;
+	background-color: var(--light-color);
+	border-radius: 5px;
+	overflow-wrap: break-word;
 }
 
-
-.container-fluid h2,.container-fluid h3{
-  font-weight: 400;
+.chat-messages .message .meta {
+	font-size: 15px;
+	font-weight: bold;
+	color: var(--dark-color-b);
+	opacity: 0.7;
+	margin-bottom: 7px;
 }
 
-.container-fluid img{
-  width: 200px;
+.chat-messages .message .meta span {
+	color: #777;
 }
-.error{
-    color : red;
-    font-weight: bold;
+
+.chat-form-container {
+	padding: 20px 30px;
+	background-color: var(--dark-color-a);
 }
-.good{
-    color : green ;
-    font-weight: bold;
+
+.chat-form-container form {
+	display: flex;
+}
+
+.chat-form-container input[type='text'] {
+	font-size: 16px;
+	padding: 5px;
+	height: 40px;
+	flex: 1;
+}
+
+/* Join Page */
+.join-container {
+	max-width: 500px;
+	margin: 80px auto;
+	color: #fff;
+}
+
+.join-header {
+	text-align: center;
+	padding: 20px;
+	background: var(--dark-color-a);
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.join-main {
+	padding: 30px 40px;
+	background: var(--dark-color-b);
+}
+
+.join-main p {
+	margin-bottom: 20px;
+}
+
+.join-main .form-control {
+	margin-bottom: 20px;
+}
+
+.join-main label {
+	display: block;
+	margin-bottom: 5px;
+}
+
+.join-main input[type='text'] {
+	font-size: 16px;
+	padding: 5px;
+	height: 40px;
+	width: 100%;
+}
+
+.join-main select {
+	font-size: 16px;
+	padding: 5px;
+	height: 40px;
+	width: 100%;
+}
+
+.join-main .btn {
+	margin-top: 20px;
+	width: 100%;
+}
+
+@media (max-width: 700px) {
+	.chat-main {
+		display: block;
+	}
+
+	.chat-sidebar {
+		display: none;
+	}
 }
