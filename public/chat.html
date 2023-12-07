@@ -28,18 +28,17 @@
         <div class="chat-messages"></div>
       </main>
       <div class="chat-form-container">
-        <form id="chat-form">
+        <form id="chat-form" enctype="multipart/form-data">
           <input
             id="msg"
             type="text"
             placeholder="Enter Message"
-            required
             autocomplete="off"
           />
 
           <!-- Add the file input here with the same id and class -->
           <div id="fileDetails"></div>
-          <input type="file" id="fileInput" class="file-input" />
+          <input type="file" id="fileInput" name="file" class="file-input" />
 
           <button class="btn"><i class="fas fa-paper-plane"></i> Send</button>
         </form>

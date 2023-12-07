@@ -1,4 +1,3 @@
-// socket.js
 const formatMessage = require("./utils/messages");
 const getCurrentTime = require("./utils/time");
 const {
@@ -17,13 +16,11 @@ module.exports = (io, db) => {
 
       socket.join(user.room);
 
-      // Emit the welcome message to the user who joined
       socket.emit(
         "message",
         formatMessage("ChatCord Bot", `Welcome to ${user.room}!`)
       );
 
-      // Broadcast the join message to all users in the room
       socket.broadcast
         .to(user.room)
         .emit(
@@ -31,7 +28,6 @@ module.exports = (io, db) => {
           formatMessage("ChatCord Bot", `${user.username} has joined the chat`)
         );
 
-      // Emit the updated user list to all users in the room
       io.to(user.room).emit("roomUsers", {
         room: user.room,
         users: getRoomUsers(user.room),
@@ -45,15 +41,12 @@ module.exports = (io, db) => {
         const { message, file } = data;
 
         if (file) {
-          // Handle file upload logic here
-          // You may want to save the file to the server, generate a unique filename, etc.
-          // Then broadcast a message with the file details to all users in the room
+          const fileDetails = await uploadFileAndGetDetails(file);
+
           io.to(user.room).emit("fileMessage", {
             username: user.username,
             time: getCurrentTime(),
-            fileDetails: {
-              url: "example-url", // Replace with the actual property for file URL
-            },
+            fileDetails,
           });
         } else if (message) {
           const messageData = {
@@ -64,11 +57,9 @@ module.exports = (io, db) => {
           };
 
           try {
-            // Store the text message in the database
             await db.query("INSERT INTO message SET ?", messageData);
             console.log("Text message stored in the database");
 
-            // Broadcast the text message to all users in the room
             io.to(user.room).emit("message", {
               ...formatMessage(user.username, message),
               time: getCurrentTime(),
@@ -79,6 +70,24 @@ module.exports = (io, db) => {
         }
       }
     });
+
+    async function uploadFileAndGetDetails(file) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const response = await fetch("http://localhost:5000/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Error uploading file and getting details:", error);
+        return null;
+      }
+    }
 
     socket.on("disconnect", () => {
       const user = userLeave(socket.id);

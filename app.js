@@ -6,6 +6,7 @@ const mysql = require("mysql");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const multer = require("multer");
 const formatMessage = require("./utils/messages");
 const {
   userJoin,
@@ -36,11 +37,40 @@ db.connect((err) => {
   }
 });
 
+app.use(express.static(path.join(__dirname, "public")));
+app.set("view engine", "hbs");
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use(express.static(path.join(__dirname, "public")));
-app.set("view engine", "hbs");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); 
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(
+      null,
+      file.fieldname + "-" + uniqueSuffix + path.extname(file.originalname)
+    );
+  },
+});
+
+const upload = multer({ storage: storage });
+app.use(upload.single("file")); 
+app.use("/uploads", express.static("uploads"));
+
+
+app.post("/upload", (req, res) => {
+  console.log("Received file:", req.file); 
+  if (req.file) {
+    const { originalname, filename, path } = req.file;
+    res.json({ originalname, filename, path });
+  } else {
+    res.status(400).json({ error: "No file received" });
+  }
+});
 
 app.use("/", require("./routes/pages"));
 app.use("/auth", require("./routes/auth"));
